@@ -56,7 +56,7 @@ jobs:
       - name: Create an Archive For Release
         uses: montudor/action-zip@v0.1.0
         with:
-          args: zip -X -r production-ready.zip . -x ".git/*" "node_modules/*" "tests/*" ".github/*" composer.* package* phpunit.xml # We excluding git, node_modules, and others not needed in production
+          args: zip -X -r production-ready.zip . -x ".git/*" "node_modules/*" "tests/*" ".github/*" package* phpunit.xml # We excluding git, node_modules, and others not needed in production
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
