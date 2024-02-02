@@ -9,6 +9,10 @@ use Spatie\Permission\Models\Permission;
 
 class AddServer extends Component
 {
+    public $uses_whitelist = false;
+    public $rcon = '';
+    public $name = '';
+
     public array $availableRCON;
 
     public function rules()
