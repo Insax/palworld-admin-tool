@@ -7,18 +7,24 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Player
  *
- * @property string $id
+ * @property int $id
+ * @property string $player_id
+ * @property string $name
  * @property string $steam_id
  * @property bool $online
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property int|null $server_id
+ * @property Server|null $server
+ * @property Collection|JoinAndLeave[] $join_and_leaves
  * @package App\Models
- * @property string $name
+ * @property-read int|null $join_and_leaves_count
  * @method static \Illuminate\Database\Eloquent\Builder|Player newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Player newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Player query()
@@ -26,6 +32,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Player whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Player whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Player whereOnline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Player wherePlayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Player whereServerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Player whereSteamId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Player whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -35,14 +43,25 @@ class Player extends Model
 	protected $table = 'players';
 
 	protected $casts = [
-		'online' => 'bool'
+		'online' => 'bool',
+		'server_id' => 'int'
 	];
 
 	protected $fillable = [
+		'player_id',
+		'name',
 		'steam_id',
 		'online',
-        'name',
-        'server_id',
-        'player_id'
+		'server_id'
 	];
+
+	public function server()
+	{
+		return $this->belongsTo(Server::class);
+	}
+
+	public function join_and_leaves()
+	{
+		return $this->hasMany(JoinAndLeave::class);
+	}
 }

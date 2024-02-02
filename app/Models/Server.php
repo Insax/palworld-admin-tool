@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -15,12 +16,17 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $name
  * @property string $rcon
- * @property string $storage
  * @property bool $online
  * @property bool $active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property bool $shutting_down
+ * @property bool $uses_whitelist
+ * @property Collection|Player[] $players
+ * @property Collection|ServerWhitelist[] $server_whitelists
  * @package App\Models
+ * @property-read int|null $players_count
+ * @property-read int|null $server_whitelists_count
  * @method static \Illuminate\Database\Eloquent\Builder|Server newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Server newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Server query()
@@ -30,8 +36,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereOnline($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereRcon($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereStorage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereShuttingDown($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereUsesWhitelist($value)
  * @mixin \Eloquent
  */
 class Server extends Model
@@ -40,21 +47,27 @@ class Server extends Model
 
 	protected $casts = [
 		'online' => 'bool',
-		'active' => 'bool'
+		'active' => 'bool',
+		'shutting_down' => 'bool',
+		'uses_whitelist' => 'bool'
 	];
 
 	protected $fillable = [
 		'name',
 		'rcon',
-		'uses_whitelist',
-        'shutting_down',
 		'online',
-		'active'
+		'active',
+		'shutting_down',
+		'uses_whitelist'
 	];
 
-    public static function getServerCount()
-    {
-        if(Auth::check())
-            return true;
-    }
+	public function players()
+	{
+		return $this->hasMany(Player::class);
+	}
+
+	public function server_whitelists()
+	{
+		return $this->hasMany(ServerWhitelist::class);
+	}
 }

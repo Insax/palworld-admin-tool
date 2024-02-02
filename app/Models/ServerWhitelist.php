@@ -11,17 +11,23 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class ServerWhitelist
- * 
+ *
  * @property int $id
  * @property int $server_id
  * @property string $player_id
- * @property string $steam_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
  * @property Server $server
- *
  * @package App\Models
+ * @method static \Illuminate\Database\Eloquent\Builder|ServerWhitelist newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServerWhitelist newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServerWhitelist query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServerWhitelist whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServerWhitelist whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServerWhitelist wherePlayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServerWhitelist whereServerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServerWhitelist whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class ServerWhitelist extends Model
 {
@@ -33,8 +39,7 @@ class ServerWhitelist extends Model
 
 	protected $fillable = [
 		'server_id',
-		'player_id',
-		'steam_id'
+		'player_id'
 	];
 
 	public function server()

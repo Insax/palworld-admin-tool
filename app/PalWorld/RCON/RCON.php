@@ -4,6 +4,7 @@ namespace App\PalWorld\RCON;
 
 use App\Models\JoinAndLeave;
 use App\Models\Server;
+use Illuminate\Support\Facades\Log;
 
 class RCON implements ConnectionInterface
 {
