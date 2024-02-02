@@ -1,9 +1,10 @@
-name: Laravel Build and Deploy To Amezmo
+name: Build Application
 on:
   push:
     branches: [main]
 jobs:
   build:
+    permissions: write-all
     runs-on: ubuntu-latest # Machine To Run On
     steps:
       - uses: actions/checkout@v2
@@ -70,12 +71,3 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
           body: "Latest Release"
-
-  deploy:
-    needs: [build] # The below only runs if the build is succesful
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Latest ZIP Release
-        run: |
-          curl -s https://api.github.com/repos/Insax/palworld-admin-tool/releases/latest | \
-          grep -E "browser_download_url" | grep -Eo 'https://[^\"]*' | xargs wget -O "latest.zip"
