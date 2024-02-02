@@ -54,6 +54,12 @@ The following packages need to be installed:
     ```bash
     cp .env.example .env
     ```
+4. Generate an application key
+
+   ```bash
+   php artisan key:generate
+   ```
+   
 5. Adjust the connections in config/rcon.php so they match you servers. Do not edit the default entry, it will not show up the application.
 
 6. Configure your webserver, the content root is in `public`
