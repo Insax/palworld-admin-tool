@@ -47,7 +47,8 @@ class SyncPlayersCommand extends Command
                 if(is_null($players))
                 {
                     $newPlayer = Player::create($player);
-                    JoinAndLeave::create(['player_id' => $newPlayer->id, 'action' => JoinAndLeave::$PLAYER_JOINED]);
+                    $id = Player::where($newPlayer)->first();
+                    JoinAndLeave::create(['player_id' => $id, 'action' => JoinAndLeave::$PLAYER_JOINED]);
                 }
                 else
                 {

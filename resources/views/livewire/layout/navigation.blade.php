@@ -33,7 +33,7 @@ new class extends Component
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    @if(\App\Models\Server::count() <= 1)
+                    @if(\App\Models\Server::count() == 0)
                         <x-nav-link>
                             {{ __('No servers configured yet') }}
                         </x-nav-link>
