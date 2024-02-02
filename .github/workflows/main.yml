@@ -1,0 +1,81 @@
+name: Laravel Build and Deploy To Amezmo
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest # Machine To Run On
+    steps:
+      - uses: actions/checkout@v2
+      - name: Node.js Setup
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+      - name: Cache node_modules directory
+        uses: actions/cache@v2
+        id: node_modules-cache
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package.json') }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Install NPM packages
+        if: steps.node_modules-cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Build frontend
+        run: npm run build
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - name: Get Composer Cache Directory 2
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v2
+        id: actions-cache
+        with:
+          path: '${{ steps.composer-cache.outputs.dir }}'
+          key: '${{ runner.os }}-composer-${{ hashFiles(''**/composer.lock'') }}'
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Cache PHP dependencies
+        uses: actions/cache@v2
+        id: vendor-cache
+        with:
+          path: vendor
+          key: '${{ runner.OS }}-build-${{ hashFiles(''**/composer.lock'') }}'
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');" # If .env exist, we use that, if otherwise, copy .env.example to .env and use that instead
+      - name: Install Dependencies
+        if: steps.vendor-cache.outputs.cache-hit != 'true'
+        run: composer install -q --no-ansi --no-interaction --no-dev --no-progress --prefer-dist
+      - name: Generate key
+        run: php artisan key:generate
+      - name: Clear Config
+        run: php artisan config:clear
+      - name: Create an Archive For Release
+        uses: montudor/action-zip@v0.1.0
+        with:
+          args: zip -X -r production-ready.zip . -x ".git/*" "node_modules/*" "tests/*" ".github/*" composer.* package* phpunit.xml # We excluding git, node_modules, and others not needed in production
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+            name: production-ready
+            path: production-ready.zip
+      - name: Upload Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: production-ready.zip
+          asset_name: complete-build
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "Latest Release"
+
+  deploy:
+    needs: [build] # The below only runs if the build is succesful
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Latest ZIP Release
+        run: |
+          curl -s https://api.github.com/repos/Insax/palworld-admin-tool/releases/latest | \
+          grep -E "browser_download_url" | grep -Eo 'https://[^\"]*' | xargs wget -O "latest.zip"
