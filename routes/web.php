@@ -15,7 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 try {
     if (Schema::hasTable('migrations')) {
-        Route::view('/', 'welcome');
+        Route::get('/', function () {
+            if (\App\Models\User::count() == 0)
+                return redirect()->route('register');
+            else
+                return redirect()->route('login');
+        });
 
         Route::get('dashboard', \App\Livewire\Dashboard::class)
             ->middleware(['auth', 'verified'])
