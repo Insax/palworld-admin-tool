@@ -59,7 +59,11 @@ The following packages need to be installed:
    ```bash
    php artisan key:generate
    ```
-   
+4. Create a job in supervisor or an equivalent tool that auto restarts and runs
+
+   ```bash
+   php artisan short-schedule:run --lifetime=60
+   ```   
 5. Adjust the connections in config/rcon.php so they match you servers. Do not edit the default entry, it will not show up the application.
 
 6. Configure your webserver, the content root is in `public`
