@@ -53,7 +53,7 @@ class Installer extends Component
     {
         if($this->canInstall())
         {
-            \Artisan::call('migrate:fresh');
+            \Artisan::call('migrate:fresh', ['--force' => true]);
             redirect('register');
         }
 
