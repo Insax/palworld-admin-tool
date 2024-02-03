@@ -22,9 +22,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $updated_at
  * @property int|null $server_id
  * @property Server|null $server
- * @property Collection|JoinAndLeave[] $join_and_leaves
+ * @property Collection|JoinLeaveLog[] $join_leave_logs
  * @package App\Models
- * @property-read int|null $join_and_leaves_count
+ * @property-read int|null $join_leave_logs_count
  * @method static \Illuminate\Database\Eloquent\Builder|Player newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Player newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Player query()
@@ -60,8 +60,8 @@ class Player extends Model
 		return $this->belongsTo(Server::class);
 	}
 
-	public function join_and_leaves()
+	public function join_leave_logs()
 	{
-		return $this->hasMany(JoinAndLeave::class);
+		return $this->hasMany(JoinLeaveLog::class);
 	}
 }

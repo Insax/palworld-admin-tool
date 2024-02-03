@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class JoinAndLeave
+ * Class JoinLeaveLog
  *
  * @property int $id
  * @property int $player_id
@@ -19,19 +19,19 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $updated_at
  * @property Player $player
  * @package App\Models
- * @method static \Illuminate\Database\Eloquent\Builder|JoinAndLeave newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|JoinAndLeave newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|JoinAndLeave query()
- * @method static \Illuminate\Database\Eloquent\Builder|JoinAndLeave whereAction($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JoinAndLeave whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JoinAndLeave whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JoinAndLeave wherePlayerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JoinAndLeave whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JoinLeaveLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|JoinLeaveLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|JoinLeaveLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder|JoinLeaveLog whereAction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JoinLeaveLog whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JoinLeaveLog whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JoinLeaveLog wherePlayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JoinLeaveLog whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class JoinAndLeave extends Model
+class JoinLeaveLog extends Model
 {
-	protected $table = 'join_and_leave';
+	protected $table = 'join_leave_log';
 
 	protected $casts = [
 		'player_id' => 'int'

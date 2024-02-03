@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\JoinAndLeave;
+use App\Models\JoinLeaveLog;
 use App\Models\Player;
 use App\Models\Server;
 use App\Models\ServerWhitelist;
@@ -47,13 +47,13 @@ class SyncPlayersCommand extends Command
                 if(is_null($players))
                 {
                     $newPlayer = Player::create($player);
-                    JoinAndLeave::create(['player_id' => $newPlayer->id, 'action' => JoinAndLeave::$PLAYER_JOINED]);
+                    JoinLeaveLog::create(['player_id' => $newPlayer->id, 'action' => JoinLeaveLog::$PLAYER_JOINED]);
                 }
                 else
                 {
                     if($players->online == false)
                     {
-                        JoinAndLeave::create(['player_id' => $players->id, 'action' => JoinAndLeave::$PLAYER_JOINED]);
+                        JoinLeaveLog::create(['player_id' => $players->id, 'action' => JoinLeaveLog::$PLAYER_JOINED]);
                     }
                     $players->update($player);
                 }
@@ -63,7 +63,7 @@ class SyncPlayersCommand extends Command
             foreach ($offlinePlayers as $offlinePlayer)
             {
                 $offlinePlayer->update(['online' => false]);
-                JoinAndLeave::create(['player_id' => $offlinePlayer->id, 'action' => JoinAndLeave::$PLAYER_LEFT]);
+                JoinLeaveLog::create(['player_id' => $offlinePlayer->id, 'action' => JoinLeaveLog::$PLAYER_LEFT]);
             }
 
             if($server->uses_whitelist)
@@ -79,7 +79,7 @@ class SyncPlayersCommand extends Command
                 foreach ($notWhitelistedPlayers as $notWhitelistedPlayer) {
                     RCON::kickPlayer($server->rcon, $notWhitelistedPlayer->player_id);
                     $notWhitelistedPlayer->update(['online' => false]);
-                    JoinAndLeave::create(['player_id' => $notWhitelistedPlayer->id, 'action' => JoinAndLeave::$PLAYER_KICKED_WHITELIST]);
+                    JoinLeaveLog::create(['player_id' => $notWhitelistedPlayer->id, 'action' => JoinLeaveLog::$PLAYER_KICKED_WHITELIST]);
                 }
             }
         }

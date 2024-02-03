@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\JoinAndLeave;
+use App\Models\JoinLeaveLog;
 use App\Models\Player;
 use App\Models\Server;
 use RCON;
@@ -26,7 +26,7 @@ class ServerDashboard extends Component
     {
         $rcon = Server::find($this->id)->rcon;
         RCON::kickPlayer($rcon, $player['player_id']);
-        JoinAndLeave::create(['player_id' => $player['id'], 'action' => JoinAndLeave::$PLAYER_KICKED_USER]);
+        JoinLeaveLog::create(['player_id' => $player['id'], 'action' => JoinLeaveLog::$PLAYER_KICKED_USER]);
         return redirect()->route('server-dashboard', ['id' => $this->id]);
     }
 
@@ -34,7 +34,7 @@ class ServerDashboard extends Component
     {
         $rcon = Server::find($this->id)->rcon;
         RCON::banPlayer($rcon, $player['player_id']);
-        JoinAndLeave::create(['player_id' => $player['id'], 'action' => JoinAndLeave::$PLAYER_BAN_USR]);
+        JoinLeaveLog::create(['player_id' => $player['id'], 'action' => JoinLeaveLog::$PLAYER_BAN_USR]);
         return redirect()->route('server-dashboard', ['id' => $this->id]);
     }
 
@@ -46,7 +46,7 @@ class ServerDashboard extends Component
 
     public function buildJoinLeaveLog()
     {
-        $this->joinLeaveLog = JoinAndLeave::whereRelation('player', 'server_id', $this->id)->orderBy('created_at', 'desc')->with('player')->limit(200)->get();
+        $this->joinLeaveLog = JoinLeaveLog::whereRelation('player', 'server_id', $this->id)->orderBy('created_at', 'desc')->with('player')->limit(200)->get();
     }
 
     public function shutdownServer()

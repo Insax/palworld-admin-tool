@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class NewUserListener
+class UserHasRegistered
 {
     /**
      * Create the event listener.
