@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div wire:poll.30s class="relative overflow-x-auto">
+                    <div wire:poll.30s class="relative overflow-auto h-[40vh]">
                         <div class="flex justify-between">
                             @if(\App\Models\Server::find($id)->shutting_down)
                                 <x-primary-button type="button"  disabled wire:click.prevent class="mb-4 flex self-end">Shutdown in Progress</x-primary-button>
@@ -99,7 +99,7 @@
                             {{ __('Join/Leave log of Server ').$serverName }}
                         </h2>
                         <div class="w-full dark:bg-gray-900 rounded-2xl">
-                            <div wire:poll.5s="buildJoinLeaveLog" class="m-2 p-3">
+                            <div wire:poll.5s="buildJoinLeaveLog" class="m-2 p-3 overflow-auto h-[40vh]">
                                 @foreach($joinLeaveLog as $log)
                                     <p class="font-mono text-sm">
                                         <span class="dark:text-orange-300 text-orange-300">{{ $log->created_at }}</span> Player
