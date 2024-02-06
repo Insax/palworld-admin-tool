@@ -447,7 +447,7 @@ return [
         | NOTE: This requires PHP 7.0 or later.
         |
         */
-        'enable_return_types' => false,
+        'enable_return_types' => true,
     ],
 
     /*

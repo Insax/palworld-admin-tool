@@ -88,6 +88,9 @@ new class extends Component
                         <x-dropdown-link :href="route('server-overview')" wire:navigate>
                             {{ __('Server Overview') }}
                         </x-dropdown-link>
+                        <x-dropdown-link :href="route('rcon-overview')" wire:navigate>
+                            {{ __('Rcon Connections') }}
+                        </x-dropdown-link>
 
                         <!-- Authentication -->
                         <button wire:click="logout" class="w-full text-start">

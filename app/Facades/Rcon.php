@@ -1,10 +1,10 @@
 <?php
 
-namespace App\PalWorld\RCON\Facades;
+namespace App\Facades;
 
 use Illuminate\Support\Facades\Facade as BaseFacade;
 
-final class Facade extends BaseFacade
+class Rcon extends BaseFacade
 {
     /**
      * Return Laravel Framework facade accessor name.
@@ -13,6 +13,6 @@ final class Facade extends BaseFacade
      */
     protected static function getFacadeAccessor()
     {
-        return 'RCON';
+        return 'Rcon';
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PalWorld\RCON;
+namespace App\Support\RCON;
 
-class Packet
+class PalworldRconPacket
 {
     /**
      * Fillable field names in packet structure.
@@ -68,11 +68,7 @@ class Packet
     {
         foreach ($this->fillable as $field)
         {
-            if (! array_key_exists($field, $fields)) {
-                throw new Exception("Invalid packet structure - missing $field field");
-            }
-
-            $this->{$field} = $fields[$field];
+            $this->fillable[$field] = $fields[$field];
         }
 
         $this->encode();
@@ -137,7 +133,7 @@ class Packet
      */
     public function getId()
     {
-        return $this->id;
+        return $this->fillable['id'];
     }
 
     /**
@@ -147,7 +143,7 @@ class Packet
      */
     public function getType()
     {
-        return $this->type;
+        return $this->fillable['type'];
     }
 
     /**
@@ -157,7 +153,7 @@ class Packet
      */
     public function getBody()
     {
-        return $this->body;
+        return $this->fillable['body'];
     }
 
     /**
@@ -168,7 +164,7 @@ class Packet
      */
     protected function encode()
     {
-        $bytes = pack("VVZ*", $this->id, $this->type, $this->body);
+        $bytes = pack("VVZ*", $this->fillable['id'], $this->fillable['type'], $this->fillable['body']);
         $bytes .= "\x00";
 
         $this->size = strlen($bytes);

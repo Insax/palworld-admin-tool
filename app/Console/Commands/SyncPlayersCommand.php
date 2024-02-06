@@ -7,10 +7,12 @@ use App\Models\Player;
 use App\Models\Server;
 use App\Models\ServerWhitelist;
 use Illuminate\Console\Command;
-use RCON;
+use Rcon;
 
 class SyncPlayersCommand extends Command
 {
+    private $servers;
+
     /**
      * The name and signature of the console command.
      *
@@ -30,6 +32,13 @@ class SyncPlayersCommand extends Command
      */
     public function handle()
     {
+        $this->servers = Server::whereActive(true);
+        foreach ($this->servers as $server)
+        {
+            $result = Rcon::showPlayers($server);
+            var_dump($result);
+        }
+        /*
         foreach (Server::whereActive(true)->get() as $server)
         {
             $onlinePlayers = array();
@@ -83,5 +92,6 @@ class SyncPlayersCommand extends Command
                 }
             }
         }
+        */
     }
 }

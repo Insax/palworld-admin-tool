@@ -15,18 +15,19 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $name
- * @property string $rcon
  * @property bool $online
  * @property bool $active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property bool $shutting_down
  * @property bool $uses_whitelist
+ * @property int $rcon_data_id
+ * @property RconData $rconData
  * @property Collection|Player[] $players
- * @property Collection|ServerWhitelist[] $server_whitelists
+ * @property Collection|ServerWhitelist[] $serverWhitelists
  * @package App\Models
  * @property-read int|null $players_count
- * @property-read int|null $server_whitelists_count
+ * @property-read int|null $serverWhitelists_count
  * @method static \Illuminate\Database\Eloquent\Builder|Server newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Server newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Server query()
@@ -35,7 +36,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereOnline($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereRcon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereRconDataId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereShuttingDown($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUsesWhitelist($value)
@@ -49,24 +50,30 @@ class Server extends Model
 		'online' => 'bool',
 		'active' => 'bool',
 		'shutting_down' => 'bool',
-		'uses_whitelist' => 'bool'
+		'uses_whitelist' => 'bool',
+		'rcon_data_id' => 'int'
 	];
 
 	protected $fillable = [
 		'name',
-		'rcon',
 		'online',
 		'active',
 		'shutting_down',
-		'uses_whitelist'
+		'uses_whitelist',
+		'rcon_data_id'
 	];
+
+	public function rconData()
+	{
+		return $this->belongsTo(RconData::class, 'rcon_data_id');
+	}
 
 	public function players()
 	{
 		return $this->hasMany(Player::class);
 	}
 
-	public function server_whitelists()
+	public function serverWhitelists()
 	{
 		return $this->hasMany(ServerWhitelist::class);
 	}
