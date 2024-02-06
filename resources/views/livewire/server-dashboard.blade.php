@@ -99,7 +99,7 @@
                             {{ __('Join/Leave log of Server ').$serverName }}
                         </h2>
                         <div class="w-full dark:bg-gray-900 rounded-2xl">
-                            <div wire:poll.5s="buildJoinLeaveLog" class="m-2 p-3 overflow-auto h-[40vh]">
+                            <div wire:poll.5s="buildJoinLeaveLog" class="m-2 p-3">
                                 @foreach($joinLeaveLog as $log)
                                     <p class="font-mono text-sm">
                                         <span class="dark:text-orange-300 text-orange-300">{{ $log->created_at }}</span> Player
@@ -109,11 +109,11 @@
                                         @elseif($log->action == 'LEFT')
                                             <span class="dark:text-red-400 text-red-400">left</span>
                                         @elseif($log->action == 'KICKWL')
-                                            <span class="dark:text-red-400 text-red-400">was kicked by the automatic Whitelist from</span>
+                                            <span class="dark:text-red-400 text-red-400">was kicked by the automatic Whitelist <span class="text-white">from</span></span>
                                         @elseif($log->action == 'KICKUSR')
-                                            <span class="dark:text-red-400 text-red-400">was kicked by a User from</span>
+                                            <span class="dark:text-red-400 text-red-400">was kicked by a User <span class="text-white">from</span></span>
                                         @elseif($log->action == 'BANUSR')
-                                            <span class="dark:text-red-400 text-red-400">was banned by a User from</span>
+                                            <span class="dark:text-red-400 text-red-400">was banned by a User <span class="text-white"> from</span></span>
                                         @endif
                                         the Server.
                                     </p>
