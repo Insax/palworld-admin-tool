@@ -46,13 +46,11 @@ jobs:
           key: '${{ runner.OS }}-build-${{ hashFiles(''**/composer.lock'') }}'
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');" # If .env exist, we use that, if otherwise, copy .env.example to .env and use that instead
+      - name: Create DB File
+        run: touch database/database.sqlite
       - name: Install Dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer install -q --no-ansi --no-interaction --no-dev --no-progress --prefer-dist
-      - name: Generate key
-        run: php artisan key:generate
-      - name: Clear Config
-        run: php artisan config:clear
       - name: Create an Archive For Release
         uses: montudor/action-zip@v0.1.0
         with:
