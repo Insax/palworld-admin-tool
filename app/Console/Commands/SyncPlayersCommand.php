@@ -13,7 +13,6 @@ use Rcon;
 
 class SyncPlayersCommand extends Command
 {
-    private $servers;
 
     /**
      * The name and signature of the console command.
@@ -30,9 +29,9 @@ class SyncPlayersCommand extends Command
      */
     public function handle()
     {
-        $this->servers = Server::whereActive(true)->with(['rconData', 'serverWhitelists', 'players'])->get();
+        $servers = Server::whereActive(true)->with(['rconData', 'serverWhitelists', 'players'])->get();
 
-        foreach ($this->servers as $server) {
+        foreach ($servers as $server) {
             $response = Rcon::info($server);
             if($response->getError() != 0) {
                 $this->handleUnreachableServer($server);
