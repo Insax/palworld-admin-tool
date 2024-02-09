@@ -89,7 +89,7 @@ class SyncPlayersCommand extends Command
             'name' => $player['name']
         ];
 
-        $playerModel = Player::wherePlayerId($playerData['player_id'])->whereServerId($player['server_id'])->first();
+        $playerModel = Player::wherePlayerId($playerData['player_id'])->whereServerId($server->id)->first();
 
         if ($playerModel->exists){
             if (!$playerModel->online) {
