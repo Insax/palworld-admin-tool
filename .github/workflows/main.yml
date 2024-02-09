@@ -21,8 +21,6 @@ jobs:
       - name: Install NPM packages
         if: steps.node_modules-cache.outputs.cache-hit != 'true'
         run: npm ci
-      - name: Build frontend
-        run: npm run build
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -51,6 +49,8 @@ jobs:
       - name: Install Dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer install -q --no-ansi --no-interaction --no-dev --no-progress --prefer-dist
+      - name: Build frontend
+        run: npm run build
       - name: Create an Archive For Release
         uses: montudor/action-zip@v0.1.0
         with:
