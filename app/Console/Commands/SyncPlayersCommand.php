@@ -91,7 +91,7 @@ class SyncPlayersCommand extends Command
 
         $playerModel = Player::wherePlayerId($playerData['player_id'])->whereServerId($server->id)->first();
 
-        if ($playerModel->exists){
+        if (!is_null($playerModel)){
             if (!$playerModel->online) {
                 $this->logPlayerAction($playerModel, JoinLeaveLog::$PLAYER_JOINED);
             }
