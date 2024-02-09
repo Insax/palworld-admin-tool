@@ -44,7 +44,7 @@ class EditServer extends Component
     public function updateServer()
     {
         $this->validate();
-        $this->server->update($this->only(['name', 'rcon', 'uses_whitelist']));
+        $this->server->update(['name' => $this->name, 'rcon_data_id' => $this->rcon, 'uses_whitelist' => $this->uses_whitelist]);
         return redirect()->route('server-dashboard', ['id' => $this->server->id]);
     }
 
