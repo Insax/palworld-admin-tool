@@ -18,6 +18,8 @@ class ServerOverview extends Component
     public function deleteServer(Server $server)
     {
         $server->serverWhitelists()->delete();
+        foreach ($server->players as $player)
+            $player->joinLeaveLogs()->delete();
         $server->players()->delete();
         $server->delete();
         Toaster::success('Server has been successfully deleted');
