@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     protected function shortSchedule(\Spatie\ShortSchedule\ShortSchedule $shortSchedule): void
     {
         // this command will run every second
-        $shortSchedule->command('pal:sync')->everySeconds(5);
+        $shortSchedule->command('pal:sync')->everySeconds(5)->withoutOverlapping();
     }
 
     /**

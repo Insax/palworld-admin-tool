@@ -70,7 +70,7 @@ class SyncPlayersCommand extends Command
         $result = Rcon::showPlayers($server);
 
         foreach ($result->getResult() as $player) {
-            if ($player['player_id'] === 00000000) continue;
+            if ($player['player_id'] == '00000000') continue;
 
             $onlinePlayersIDs[] = $player['player_id'];
             $this->updatePlayerStatus($player, $server);
@@ -84,10 +84,12 @@ class SyncPlayersCommand extends Command
         $playerData = [
             'online' => true,
             'server_id' => $server->id,
-            'player_id' => $player['player_id']
+            'player_id' => $player['player_id'],
+            'steam_id' => $player['steam_id'],
+            'name' => $player['name']
         ];
 
-        $playerModel = Player::firstOrNew($playerData);
+        $playerModel = Player::wherePlayerId($playerData['player_id'])->whereServerId($player['server_id'])->first();
 
         if ($playerModel->exists){
             if (!$playerModel->online) {

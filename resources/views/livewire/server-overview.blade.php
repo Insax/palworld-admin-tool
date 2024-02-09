@@ -49,7 +49,7 @@
                                         {{ $server->name }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ $server->rcon }}
+                                        {{ $server->rconData->host.':'.$server->rconData->port }}
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         @if($server->uses_whitelist)

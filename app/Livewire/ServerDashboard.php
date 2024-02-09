@@ -5,8 +5,9 @@ namespace App\Livewire;
 use App\Models\JoinLeaveLog;
 use App\Models\Player;
 use App\Models\Server;
-use RCON;
+use Masmerise\Toaster\Toaster;
 use Livewire\Component;
+use Rcon;
 
 class ServerDashboard extends Component
 {
@@ -24,18 +25,21 @@ class ServerDashboard extends Component
 
     public function kickPlayer($player)
     {
-        $rcon = Server::find($this->id)->rcon;
-        RCON::kickPlayer($rcon, $player['player_id']);
+        $server = Server::find($this->id);
+        Rcon::kickPlayer($server, $player['player_id']);
         JoinLeaveLog::create(['player_id' => $player['id'], 'action' => JoinLeaveLog::$PLAYER_KICKED_USER]);
-        return redirect()->route('server-dashboard', ['id' => $this->id]);
+        Player::whereId($player['id'])->update(['online' => false]);
+        Rcon::broadcast($server, 'Kicked_Player: '.$player['name']);
+        Toaster::success('Player kicked');
     }
 
     public function banPlayer($player)
     {
-        $rcon = Server::find($this->id)->rcon;
-        RCON::banPlayer($rcon, $player['player_id']);
+        $server = Server::find($this->id);
+        Rcon::banPlayer($server, $player['player_id']);
         JoinLeaveLog::create(['player_id' => $player['id'], 'action' => JoinLeaveLog::$PLAYER_BAN_USR]);
-        return redirect()->route('server-dashboard', ['id' => $this->id]);
+        Player::whereId($player['id'])->update(['online' => false]);
+        Toaster::success('Player banned');
     }
 
     public function buildPlayerList()
@@ -51,8 +55,9 @@ class ServerDashboard extends Component
 
     public function shutdownServer()
     {
-        $rcon = Server::find($this->id)->rcon;
-        \RCON::shutdownServer($rcon);
+        $server = Server::find($this->id);
+        Rcon::shutdownServer($server);
+        Toaster::success('Shutdown Initialized');
     }
 
     public function render()

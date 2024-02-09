@@ -11,7 +11,7 @@ class ServerOverview extends Component
 
     public function mount()
     {
-        $this->servers = Server::get();
+        $this->servers = Server::with('rconData')->get();
     }
 
     public function toggleActiveServer(Server $server)
