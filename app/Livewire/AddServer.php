@@ -41,7 +41,7 @@ class AddServer extends Component
     public function addServer()
     {
         $this->validate();
-        $server = Server::create($this->only(['name', 'rcon', 'uses_whitelist']));
+        $server = Server::create(['name' => $this->name, 'rcon_data_id' => $this->rcon, 'uses_whitelist' => $this->uses_whitelist]);
 
         Permission::create(['name' => 'View Server ['.$server->id.']']);
         Permission::create(['name' => 'Kick Server ['.$server->id.']']);
