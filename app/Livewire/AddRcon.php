@@ -46,12 +46,12 @@ class AddRcon extends Component
         $result = new InfoResponse($rcon->command('info'));
         if ($result->getError() == 0) {
             $this->testSuccessful = true;
+            $this->quickServerName = $result->getResult()['serverName'];
             Toaster::success("RCON Connection to ".$result->getResult()['serverName']." successful");
         } else
             Toaster::error($result->getHeader());
 
         $this->rconResponse = $result->getHeader();
-        $this->quickServerName = $result->getResult()['serverName'];
     }
 
     public function addRcon()
