@@ -23,7 +23,7 @@ class ServerOverview extends Component
         $server->players()->delete();
         $server->delete();
         Toaster::success('Server has been successfully deleted');
-        $this->servers = Server::with('rconData')->get();
+        return redirect()->route('server-overview');
     }
 
     public function toggleActiveServer(Server $server)
