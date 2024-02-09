@@ -23,7 +23,6 @@ class EditServer extends Component
         {
             $this->availableRCON[] = ['value' => $connection->id, 'text' => $connection->host.':'.$connection->port];
         }
-        \Debugbar::info($this->availableRCON);
         $this->server = Server::find($id);
         $this->name = $this->server->name;
         $this->rcon = $this->server->rcon_data_id;

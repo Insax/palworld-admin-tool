@@ -41,12 +41,12 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex justify-center">
-                                            <a href="#" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded m-2">
+                                            <x-link-secondary-button href="{{ route('edit-rcon', ['id' => $connection->id]) }}" class="py-2 px-4 m-2">
                                                 Edit
-                                            </a>
-                                            <a href="#" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded m-2">
+                                            </x-link-secondary-button>
+                                            <x-link-danger-button wire:click="deleteRcon({{ $connection }})" class="py-2 px-4 m-2">
                                                 Delete
-                                            </a>
+                                            </x-link-danger-button>
                                         </div>
                                     </td>
                                 </tr>
@@ -54,7 +54,7 @@
                             </tbody>
                         </table>
                         <div class="flex justify-end">
-                            <a href="{{ route('add-rcon') }}" class="flex w-32 mt-5 py text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 justify-center">Add Rcon</a>
+                            <x-link-primary-button href="{{ route('add-rcon') }}" class="flex w-32 mt-5 py text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 justify-center">Add Rcon</x-link-primary-button>
                         </div>
                     </div>
                 </div>

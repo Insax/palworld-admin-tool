@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\RconData;
 use App\Models\Server;
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 class RconOverview extends Component
 {
@@ -13,6 +14,21 @@ class RconOverview extends Component
     public function mount()
     {
         $this->connections = RconData::get();
+    }
+
+    public function deleteRcon(RconData $rconData)
+    {
+        $serverExists = false;
+        foreach ($rconData->servers as $server)
+        {
+            Toaster::error('Can\'t delete RCON, Server '. $server->name .' is still connected to it.');
+            $serverExists = true;
+        }
+
+        if(!$serverExists) {
+            $rconData->delete();
+            Toaster::success('RCON successfully deleted.');
+        }
     }
 
     public function toggleActiveServer(Server $server)

@@ -50,6 +50,10 @@ try {
             ->middleware(['auth', 'verified'])
             ->name('add-rcon');
 
+        Route::get('rcon/edit/{id}', \App\Livewire\EditRcon::class)
+            ->middleware(['auth', 'verified'])
+            ->name('edit-rcon');
+
         Route::get('server/add', \App\Livewire\AddServer::class)
             ->middleware(['auth', 'verified'])
             ->name('add-server');

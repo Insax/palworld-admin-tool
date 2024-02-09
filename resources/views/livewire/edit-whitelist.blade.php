@@ -54,9 +54,9 @@
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex justify-center">
-                                            <button wire:click="removePlayer({{ $player->player_id }})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2">
+                                            <x-danger-button wire:click="removePlayer({{ $player->player_id }})">
                                                 Remove
-                                            </button>
+                                            </x-danger-button>
                                         </div>
                                     </td>
                                 </tr>
@@ -78,9 +78,9 @@
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex justify-center">
-                                            <button wire:click="addPlayer" class="bg-green-700 hover:bg-green-900 text-white font-bold py-2 px-4 rounded m-2">
+                                            <x-secondary-button wire:click="addPlayer">
                                                 Add
-                                            </button>
+                                            </x-secondary-button>
                                         </div>
                                     </td>
                                 </tr>

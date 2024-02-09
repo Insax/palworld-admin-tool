@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Server;
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 class ServerOverview extends Component
 {
@@ -12,6 +13,14 @@ class ServerOverview extends Component
     public function mount()
     {
         $this->servers = Server::with('rconData')->get();
+    }
+
+    public function deleteServer(Server $server)
+    {
+        $server->serverWhitelists()->delete();
+        $server->players()->delete();
+        $server->delete();
+        Toaster::success('Server has been successfully deleted');
     }
 
     public function toggleActiveServer(Server $server)

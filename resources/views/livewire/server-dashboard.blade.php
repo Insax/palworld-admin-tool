@@ -68,12 +68,12 @@
                                     <td class="px-6 py-4 text-center">
                                         @if($player->online)
                                             <div class="flex justify-center">
-                                                <button wire:click="kickPlayer({{ $player }})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2">
+                                                <x-secondary-button wire:click="kickPlayer({{ $player }})">
                                                     Kick
-                                                </button>
-                                                <button wire:click="banPlayer({{ $player }})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2">
+                                                </x-secondary-button>
+                                                <x-danger-button wire:click="banPlayer({{ $player }})">
                                                     Ban
-                                                </button>
+                                                </x-danger-button>
                                             </div>
                                         @else
                                             Player Offline!
