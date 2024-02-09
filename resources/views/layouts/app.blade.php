@@ -32,6 +32,7 @@
                 {{ $slot }}
             </main>
         </div>
+        <x-toaster-hub />
         <fc:scripts />
     </body>
 </html>

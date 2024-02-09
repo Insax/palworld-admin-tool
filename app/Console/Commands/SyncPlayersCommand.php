@@ -2,26 +2,25 @@
 
 namespace App\Console\Commands;
 
-use App\Models\JoinAndLeave;
+use App\Gameserver\Communication\Responses\Response;
+use App\Gameserver\Communication\Responses\ShowPlayersResponse;
+use App\Models\JoinLeaveLog;
 use App\Models\Player;
 use App\Models\Server;
 use App\Models\ServerWhitelist;
 use Illuminate\Console\Command;
-use RCON;
+use Rcon;
 
 class SyncPlayersCommand extends Command
 {
+
     /**
      * The name and signature of the console command.
-     *
-     * @var string
      */
     protected $signature = 'pal:sync';
 
     /**
      * The console command description.
-     *
-     * @var string
      */
     protected $description = 'Synchronizes Players from a PalWorldServer';
 
@@ -30,58 +29,109 @@ class SyncPlayersCommand extends Command
      */
     public function handle()
     {
-        foreach (Server::whereActive(true)->get() as $server)
-        {
-            $onlinePlayers = array();
-            $result = RCON::getPlayers($server->rcon);
-            foreach ($result as $player) {
-                if($player['player_id'] == 00000000)
-                    continue;
+        $servers = Server::whereActive(true)->with(['rconData', 'serverWhitelists', 'players'])->get();
 
-                $onlinePlayers[] = $player['player_id'];
-
-                $player['online'] = true;
-                $player['server_id'] = $server->id;
-                $players = Player::where(['player_id' => $player['player_id'], 'server_id' => $player['server_id']])->first();
-
-                if(is_null($players))
-                {
-                    $newPlayer = Player::create($player);
-                    JoinAndLeave::create(['player_id' => $newPlayer->id, 'action' => JoinAndLeave::$PLAYER_JOINED]);
-                }
-                else
-                {
-                    if($players->online == false)
-                    {
-                        JoinAndLeave::create(['player_id' => $players->id, 'action' => JoinAndLeave::$PLAYER_JOINED]);
-                    }
-                    $players->update($player);
-                }
-            }
-            $offlinePlayers = Player::where('server_id', $server->id)->whereNotIn('player_id', $onlinePlayers)->whereOnline(true)->get();
-
-            foreach ($offlinePlayers as $offlinePlayer)
-            {
-                $offlinePlayer->update(['online' => false]);
-                JoinAndLeave::create(['player_id' => $offlinePlayer->id, 'action' => JoinAndLeave::$PLAYER_LEFT]);
+        foreach ($servers as $server) {
+            $response = Rcon::info($server);
+            if($response->getError() != 0) {
+                $this->handleUnreachableServer($server);
+                continue;
             }
 
-            if($server->uses_whitelist)
-            {
-                $whitelist = ServerWhitelist::where('server_id', $server->id)->get();
-                $whitelistPlayers = array();
-                foreach ($whitelist as $whitelistItem) {
-                    $whitelistPlayers[] = $whitelistItem->player_id;
-                }
+            if(!$server->online)
+                $server->update(['online' => true]);
 
-                $notWhitelistedPlayers = Player::where('server_id', $server->id)->whereNotIn('player_id', $whitelistPlayers)->get();
-
-                foreach ($notWhitelistedPlayers as $notWhitelistedPlayer) {
-                    RCON::kickPlayer($server->rcon, $notWhitelistedPlayer->player_id);
-                    $notWhitelistedPlayer->update(['online' => false]);
-                    JoinAndLeave::create(['player_id' => $notWhitelistedPlayer->id, 'action' => JoinAndLeave::$PLAYER_KICKED_WHITELIST]);
-                }
-            }
+            $this->syncServerPlayers($server);
         }
+    }
+
+    private function handleUnreachableServer(Server $server)
+    {
+        $server->shutting_down = false;
+        $server->online = false;
+        $this->handleOfflinePlayers($server, []);
+    }
+
+    private function syncServerPlayers(Server $server)
+    {
+        $onlinePlayers = $this->getOnlinePlayers($server);
+
+
+        $this->handleOfflinePlayers($server, $onlinePlayers);
+
+        if ($server->uses_whitelist) {
+            $this->handleNotWhitelistedPlayers($server);
+        }
+    }
+
+    private function getOnlinePlayers(Server $server): array
+    {
+        $onlinePlayersIDs = [];
+        $result = Rcon::showPlayers($server);
+
+        foreach ($result->getResult() as $player) {
+            if ($player['player_id'] == '00000000') continue;
+
+            $onlinePlayersIDs[] = $player['player_id'];
+            $this->updatePlayerStatus($player, $server);
+        }
+
+        return $onlinePlayersIDs;
+    }
+
+    private function updatePlayerStatus(array $player, Server $server): void
+    {
+        $playerData = [
+            'online' => true,
+            'server_id' => $server->id,
+            'player_id' => $player['player_id'],
+            'steam_id' => $player['steam_id'],
+            'name' => $player['name']
+        ];
+
+        $playerModel = Player::wherePlayerId($playerData['player_id'])->whereServerId($player['server_id'])->first();
+
+        if ($playerModel->exists){
+            if (!$playerModel->online) {
+                $this->logPlayerAction($playerModel, JoinLeaveLog::$PLAYER_JOINED);
+            }
+            $playerModel->update($playerData);
+        } else {
+            $playerModel = Player::create($playerData);
+            $this->logPlayerAction($playerModel, JoinLeaveLog::$PLAYER_JOINED);
+        }
+    }
+
+    private function handleOfflinePlayers(Server $server, array $onlinePlayers): void
+    {
+        $offlinePlayers = Player::where('server_id', $server->id)
+            ->whereNotIn('player_id', $onlinePlayers)
+            ->whereOnline(true)
+            ->get();
+
+        foreach ($offlinePlayers as $offlinePlayer) {
+            $offlinePlayer->update(['online' => false]);
+            $this->logPlayerAction($offlinePlayer, JoinLeaveLog::$PLAYER_LEFT);
+        }
+    }
+
+    private function handleNotWhitelistedPlayers(Server $server): void
+    {
+        $whitelistIDs = $server->serverWhitelists->pluck('player_id')->toArray();
+
+        $notWhitelistedPlayers = Player::whereServerId($server->id)
+            ->whereNotIn('player_id', $whitelistIDs)
+            ->get();
+
+        foreach ($notWhitelistedPlayers as $player) {
+            Rcon::kickPlayer($server, $player->player_id);
+            $player->update(['online' => false]);
+            $this->logPlayerAction($player, JoinLeaveLog::$PLAYER_KICKED_WHITELIST);
+        }
+    }
+
+    private function logPlayerAction(Player $player, string $action): void
+    {
+        JoinLeaveLog::create(['player_id' => $player->id, 'action' => $action]);
     }
 }

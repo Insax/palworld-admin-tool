@@ -2,9 +2,11 @@
 
 namespace App\Livewire;
 
+use App\Models\RconData;
 use App\Models\Server;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 use Spatie\Permission\Models\Permission;
 
 class AddServer extends Component
@@ -29,11 +31,9 @@ class AddServer extends Component
 
     public function mount()
     {
-        foreach (config('rcon.connections') as $conn => $values)
+        foreach (RconData::get() as $connection)
         {
-            if($conn == 'default')
-                continue;
-            $this->availableRCON[] = $conn;
+            $this->availableRCON[] = ['value' => $connection->id, 'text' => $connection->host.':'.$connection->port];
         }
     }
 
@@ -49,6 +49,7 @@ class AddServer extends Component
         Permission::create(['name' => 'Restart Server ['.$server->id.']']);
         Permission::create(['name' => 'Edit Whitelist Server ['.$server->id.']']);
 
+        Toaster::success('Server created');
         return redirect()->route('server-dashboard', ['id' => $server->id]);
     }
 

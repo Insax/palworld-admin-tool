@@ -2,11 +2,12 @@
 
 namespace App\Livewire;
 
-use App\Models\JoinAndLeave;
+use App\Models\JoinLeaveLog;
 use App\Models\Player;
 use App\Models\Server;
-use RCON;
+use Masmerise\Toaster\Toaster;
 use Livewire\Component;
+use Rcon;
 
 class ServerDashboard extends Component
 {
@@ -24,18 +25,21 @@ class ServerDashboard extends Component
 
     public function kickPlayer($player)
     {
-        $rcon = Server::find($this->id)->rcon;
-        RCON::kickPlayer($rcon, $player['player_id']);
-        JoinAndLeave::create(['player_id' => $player['id'], 'action' => JoinAndLeave::$PLAYER_KICKED_USER]);
-        return redirect()->route('server-dashboard', ['id' => $this->id]);
+        $server = Server::find($this->id);
+        Rcon::kickPlayer($server, $player['player_id']);
+        JoinLeaveLog::create(['player_id' => $player['id'], 'action' => JoinLeaveLog::$PLAYER_KICKED_USER]);
+        Player::whereId($player['id'])->update(['online' => false]);
+        Rcon::broadcast($server, 'Kicked_Player: '.$player['name']);
+        Toaster::success('Player kicked');
     }
 
     public function banPlayer($player)
     {
-        $rcon = Server::find($this->id)->rcon;
-        RCON::banPlayer($rcon, $player['player_id']);
-        JoinAndLeave::create(['player_id' => $player['id'], 'action' => JoinAndLeave::$PLAYER_BAN_USR]);
-        return redirect()->route('server-dashboard', ['id' => $this->id]);
+        $server = Server::find($this->id);
+        Rcon::banPlayer($server, $player['player_id']);
+        JoinLeaveLog::create(['player_id' => $player['id'], 'action' => JoinLeaveLog::$PLAYER_BAN_USR]);
+        Player::whereId($player['id'])->update(['online' => false]);
+        Toaster::success('Player banned');
     }
 
     public function buildPlayerList()
@@ -46,13 +50,14 @@ class ServerDashboard extends Component
 
     public function buildJoinLeaveLog()
     {
-        $this->joinLeaveLog = JoinAndLeave::whereRelation('player', 'server_id', $this->id)->orderBy('created_at', 'desc')->with('player')->limit(200)->get();
+        $this->joinLeaveLog = JoinLeaveLog::whereRelation('player', 'server_id', $this->id)->orderBy('created_at', 'desc')->with('player')->limit(200)->get();
     }
 
     public function shutdownServer()
     {
-        $rcon = Server::find($this->id)->rcon;
-        \RCON::shutdownServer($rcon);
+        $server = Server::find($this->id);
+        Rcon::shutdownServer($server);
+        Toaster::success('Shutdown Initialized');
     }
 
     public function render()

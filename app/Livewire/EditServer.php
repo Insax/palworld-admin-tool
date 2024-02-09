@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\RconData;
 use App\Models\Server;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -13,20 +14,18 @@ class EditServer extends Component
 
     public array $availableRCON;
     public string $name;
-    public string $rcon;
+    public int $rcon;
     public bool $uses_whitelist = false;
 
     public function mount($id)
     {
-        foreach (config('rcon.connections') as $conn => $values)
+        foreach (RconData::get() as $connection)
         {
-            if($conn == 'default')
-                continue;
-            $this->availableRCON[] = $conn;
+            $this->availableRCON[] = ['value' => $connection->id, 'text' => $connection->host.':'.$connection->port];
         }
         $this->server = Server::find($id);
         $this->name = $this->server->name;
-        $this->rcon = $this->server->rcon;
+        $this->rcon = $this->server->rcon_data_id;
         $this->uses_whitelist = $this->server->uses_whitelist;
     }
 
