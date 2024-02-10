@@ -31,14 +31,14 @@ class Rcon
     public function kickPlayer(Server $server, string|int $playerId) : Response
     {
         $rcon = new PalworldRcon($server->rconData->host, $server->rconData->port, \Crypt::decrypt($server->rconData->password), $server->rconData->timeout);
-        $response = $rcon->command("kick $playerId");
+        $response = $rcon->command("kickPlayer $playerId");
         return new KickPlayerResponse($response);
     }
 
     public function banPlayer(Server $server, string|int $playerId) : Response
     {
         $rcon = new PalworldRcon($server->rconData->host, $server->rconData->port, \Crypt::decrypt($server->rconData->password), $server->rconData->timeout);
-        $response = $rcon->command("ban $playerId");
+        $response = $rcon->command("banPlayer $playerId");
         return new BanPlayerResponse($response);
     }
 
