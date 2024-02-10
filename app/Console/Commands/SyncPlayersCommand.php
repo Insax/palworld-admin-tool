@@ -120,6 +120,7 @@ class SyncPlayersCommand extends Command
         $whitelistIDs = $server->serverWhitelists->pluck('player_id')->toArray();
 
         $notWhitelistedPlayers = Player::whereServerId($server->id)
+            ->whereOnline(true)
             ->whereNotIn('player_id', $whitelistIDs)
             ->get();
 
